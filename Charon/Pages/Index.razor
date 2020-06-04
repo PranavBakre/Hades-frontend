@@ -1,0 +1,60 @@
+﻿@page "/"
+@inject HttpClient Client
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+
+<div class="container">
+    <div class="row justify-content-end">
+        <EditForm Model="@loginForm" OnValidSubmit="Login" class="card mr-sm-3 mt-5">
+            <div class="card-body">
+                <div class="form-row form-group">
+                    <label for="UserName">UserName</label>
+                    <InputText id="UserName" class="form-control" @bind-Value="loginForm.UserName" />
+                </div>
+                <div class="form-row form-group">
+                    <label for="Password">Password</label>
+                    <InputText id="Password" class="form-control" type="password" @bind-Value="loginForm.Password" />
+                </div>
+                <button class="btn btn-primary"  type="submit">Login</button>
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+                
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+
+@code{      
+
+    Charon.Model.LoginForm loginForm = new Charon.Model.LoginForm();
+
+    private async Task Login()
+    {
+
+        var Credentials = Convert.ToBase64String(
+                System.Text.Encoding.UTF8.GetBytes(
+                    $"{loginForm.UserName}|{loginForm.Password}"
+                    )
+            );
+        Client.DefaultRequestHeaders.Add("Credentials", Credentials);
+        var result =(await (await Client.PostAsync("/api/authenticate",
+            new StringContent(""))).Content.ReadFromJsonAsync<Dictionary<string,string>>())["message"];
+        if (result.Contains("authenticated"))
+        {
+            localStorageService.SetItemAsync("Credentials", Credentials);
+        }
+
+
+
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await localStorageService.SetItemAsync("Credentials", "cHNiYWtyZXxQMXIyYTNhM240MTAyMDNf");
+        var messageRq = await Client.PostAsync("/api/authenticate", new StringContent(""));
+        var message = await messageRq.Content.ReadAsStringAsync();
+        Console.WriteLine(message);
+    }
+}

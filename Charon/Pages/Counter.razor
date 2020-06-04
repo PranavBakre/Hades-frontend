@@ -1,0 +1,23 @@
+﻿@page "/counter"
+@inject HttpClient Client 
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+            var messageRq = await Client.PostAsync("/api/authenticate", new StringContent(""));
+            var message = await messageRq.Content.ReadAsStringAsync();
+            Console.WriteLine(message);
+    }
+}
