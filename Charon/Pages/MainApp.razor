@@ -76,49 +76,6 @@ else
 
             </table>
         </div>
-        <table class="table">
-            <tr>
-                @foreach (var heading in Event.Users[0].Keys)
-                {
-                    <th>
-                        @heading
-                    </th>
-                }
-
-            </tr>
-
-            @for (int i = CurrentPage * PageCount; i < (CurrentPage + 1) * PageCount && i < Event.Users.Count(); i++)
-            {
-        <tr>
-            @foreach (var field in Event.Users[i].Values)
-            {
-                var value = field.ToString();
-            <td class="col-auto">
-                
-                @if (value.Contains(",") || value.Contains("|"))
-                {
-
-                string[] values = value.Split(',','|');
-                foreach (var val in values)
-                {
-                @val
-                <br />
-                }
-                }
-                else
-                {
-                @value
-                }
-            </td>
-
-                    
-
-            }
-
-        </tr>
-            }
-
-        </table>
     </div>
     }
 }
