@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Blazored.LocalStorage;
-using Charon.Services.CredentialHandler;
+using Charon.Services;
 
 namespace Charon
 {
@@ -21,9 +21,11 @@ namespace Charon
 
             builder.Services.AddTransient<CredentialHandler>();
             builder.Services.AddBlazoredLocalStorage();
-            builder.Services.AddHttpClient("Hades.API", client => client.BaseAddress = new Uri("http://localhost:5000"))
+            builder.Services.AddHttpClient("Hades.API", client => client.BaseAddress = new Uri("https://hades.thescriptgroup.in"))
                 .AddHttpMessageHandler<CredentialHandler>();
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Hades.API"));
+            builder.Services.AddSingleton<EventsService>();
+
             await builder.Build().RunAsync();
         }
     }

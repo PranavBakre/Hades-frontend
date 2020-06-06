@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Charon.Services.CredentialHandler
+namespace Charon.Services
 {
     public class CredentialHandler: DelegatingHandler
     {

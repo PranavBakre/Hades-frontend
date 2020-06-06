@@ -1,25 +1,33 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
-
-<NavMenu />
+@inject HttpClient Client 
+@inject Charon.Services.EventsService eventService
+<NavMenu Events="@EventsList" Logout="@Logout"/>
 
 
 <div class="main">
     <div class="top-row px-4">
         <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-        <NavLink class="ml-md-auto nav-link" @onclick="Logout">Log out</NavLink>
+        <a class="ml-md-auto nav-link" href="#" @onclick="Logout">
+            <span class="oi oi-account-logout" aria-hidden="true"></span> Log out
+        </a>
     </div>
 
-    <div class="content px-4">
+    <div class="content px-4 justify-content-end">
         @Body
     </div>
 </div>
 
 
 @code {
+    Dictionary<string, string> EventsList;
     private async Task Logout()
     {
         await localStorageService.ClearAsync();
 
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        EventsList =await eventService.GetAllEvents();
     }
 }

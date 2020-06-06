@@ -1,10 +1,10 @@
 ﻿@page "/"
 @inject HttpClient Client
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
-
-<div class="container">
-    <div class="row justify-content-end">
-        <EditForm Model="@loginForm" OnValidSubmit="Login" class="card mr-sm-3 mt-5">
+@layout IndexLayout
+@inject NavigationManager NavManager
+    <div class="align-content-center">
+        <EditForm Model="@loginForm" OnValidSubmit="Login" class="card">
             <div class="card-body">
                 <div class="form-row form-group">
                     <label for="UserName">UserName</label>
@@ -17,18 +17,18 @@
                 <button class="btn btn-primary"  type="submit">Login</button>
                 <DataAnnotationsValidator/>
                 <ValidationSummary/>
-                
+                <div class="@ServerMessage text-danger">@message</div>
             </div>
         </EditForm>
     </div>
-</div>
 
 
 
 @code{      
 
     Charon.Model.LoginForm loginForm = new Charon.Model.LoginForm();
-
+    string message="";
+    string ServerMessage => message!=""?"d-block":"d-none";
     private async Task Login()
     {
 
@@ -38,13 +38,18 @@
                     )
             );
         Client.DefaultRequestHeaders.Add("Credentials", Credentials);
-        var result =(await (await Client.PostAsync("/api/authenticate",
+        message =(await (await Client.PostAsync("/api/authenticate",
             new StringContent(""))).Content.ReadFromJsonAsync<Dictionary<string,string>>())["message"];
-        if (result.Contains("authenticated"))
+        if (message.Contains("authenticated"))
         {
-            localStorageService.SetItemAsync("Credentials", Credentials);
+            await localStorageService.SetItemAsync("Credentials", Credentials);
+            NavManager.NavigateTo("/app");
         }
+        else
+        {
+            Client.DefaultRequestHeaders.Remove("Credentials");
 
+        }
 
 
 
@@ -52,9 +57,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await localStorageService.SetItemAsync("Credentials", "cHNiYWtyZXxQMXIyYTNhM240MTAyMDNf");
-        var messageRq = await Client.PostAsync("/api/authenticate", new StringContent(""));
-        var message = await messageRq.Content.ReadAsStringAsync();
-        Console.WriteLine(message);
+        var cred = await localStorageService.GetItemAsync<string>("Credentials");
+        if (!string.IsNullOrEmpty(cred))
+        {
+            NavManager.NavigateTo("/app");
+        }
     }
 }
