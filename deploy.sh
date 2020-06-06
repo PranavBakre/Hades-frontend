@@ -11,5 +11,5 @@ fi
 
 eval $(ssh-agent)
 ssh-add - <<< $SSH_KEY
-run_cmd "cd Hades-frontend; git clean -fdx; git fetch origin master; git reset --hard origin/master; dotnet publish --configuration release"
+run_cmd "cd Hades-frontend; git clean -fdx; git fetch origin master; git reset --hard origin/master; dotnet publish -c Release"
 eval $(ssh-agent -k)
