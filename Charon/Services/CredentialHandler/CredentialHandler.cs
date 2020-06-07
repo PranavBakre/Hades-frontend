@@ -28,9 +28,7 @@ namespace Charon.Services
                 }
                 
             }
-            request.Headers.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("Charon","1.0"));
             
-            Console.WriteLine(request.Headers.UserAgent.ToString());
             return await base.SendAsync(request,token);
         }
     }
