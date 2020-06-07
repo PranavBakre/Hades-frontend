@@ -25,7 +25,7 @@
                         @foreach (var Evnt in EventList)
                         {
                             <li>
-                                <a class="nav-link" href="/app/@Evnt.Key">
+                                <a class="nav-link" href="/app/@Evnt.Key" @onclick="ToggleNavMenu">
                                     <span class="oi oi-list"></span> @Evnt.Key
                                 </a>
                             </li>
